@@ -2,7 +2,6 @@
 package page
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
