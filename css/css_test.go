@@ -4,6 +4,7 @@ import (
 	"log"
 	"testing"
 
+	"fmt"
 	"github.com/lucasb-eyer/go-colorful"
 )
 
@@ -39,6 +40,20 @@ var testsHtml = []struct {
 			New(mustHex("#a9a9a9"), "color", ".named"),
 		},
 	},
+}
+
+func ExampleParseHTML() {
+	cms, _ := ParseHTML(`<style>body{color:#001122}</style>
+<div id="some-div" class="some-class">
+	<span style="background-color:red"></span>
+</div>
+`)
+	for _, cm := range cms {
+		fmt.Printf("%s %s = %s\n", cm.Selector, cm.Property, cm.Color.Hex())
+	}
+	// Output:
+	// body color = #001122
+	// html > body > div#some-div.some-class > span background-color = #ff0000
 }
 
 func mustHex(h string) *colorful.Color {

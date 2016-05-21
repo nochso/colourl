@@ -1,6 +1,7 @@
 package page
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"testing"
@@ -12,6 +13,15 @@ func init() {
 		log.Fatal(http.ListenAndServe(":9595", http.FileServer(http.Dir("test"))))
 	}()
 	time.Sleep(time.Millisecond * 20)
+}
+
+func ExampleNew() {
+	p, _ := New("http://localhost:9595/external.html")
+	fmt.Printf("%s: %s\n", p.HTML.URL, p.HTML.Body)
+	fmt.Printf("%s: %s\n", p.CSS[0].URL, p.CSS[0].Body)
+	// Output:
+	// http://localhost:9595/external.html: <link rel="stylesheet" href="style.css">
+	// http://localhost:9595/style.css: body { color: #c0c0c0 }
 }
 
 // Test fetching a HTML file with no external CSS.
