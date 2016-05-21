@@ -78,7 +78,7 @@ func NewFile(url string) (*File, error) {
 	defer r.Body.Close()
 	b, err := ioutil.ReadAll(r.Body)
 	if r.StatusCode != http.StatusOK { // Handle anything but 200/OK as an error
-		return f, errors.New(fmt.Sprintf("HTTP GET '%s': %s", url, r.Status))
+		return f, fmt.Errorf("HTTP GET '%s': %s", url, r.Status)
 	}
 	if err != nil {
 		return f, err
