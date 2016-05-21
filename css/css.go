@@ -12,7 +12,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-// ColorMention is a single occurence of a color in a certain context.
+// ColorMention is a single occurrence of a color in a certain context.
 type ColorMention struct {
 	Color *colorful.Color
 	// color, background-color
