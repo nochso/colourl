@@ -1,3 +1,4 @@
+// Package page helps fetching a HTML page and its referenced CSS files.
 package page
 
 import (
@@ -19,16 +20,18 @@ type Page struct {
 	CSS  []*File
 }
 
-// Content and URL of a file.
+// File consists of the content and URL of a single file.
 type File struct {
 	Body string
 	URL  *url.URL
 }
 
+// Count returns the amount of files.
 func (p *Page) Count() int {
 	return 1 + len(p.CSS)
 }
 
+// Size returns the length of files.
 func (p *Page) Size() int {
 	s := len(p.HTML.Body)
 	for _, c := range p.CSS {
@@ -37,6 +40,8 @@ func (p *Page) Size() int {
 	return s
 }
 
+// New Page from a URL.
+// Any linked CSS stylesheets will be downloaded.
 func New(u string) (*Page, error) {
 	p := &Page{}
 	html, err := NewFile(u) // Get HTML body
@@ -58,7 +63,7 @@ func New(u string) (*Page, error) {
 	return p, nil
 }
 
-// Create a new File by GET requesting it from url.
+// NewFile creates a new File by GETting it from url.
 func NewFile(url string) (*File, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {

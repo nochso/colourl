@@ -1,3 +1,4 @@
+// Package css extracts colours from HTML and CSS files.
 package css
 
 import (
@@ -11,6 +12,7 @@ import (
 	"golang.org/x/net/html"
 )
 
+// ColorMention is a single occurence of a color in a certain context.
 type ColorMention struct {
 	Color *colorful.Color
 	// color, background-color
@@ -21,15 +23,21 @@ type ColorMention struct {
 	Selector string
 }
 
+// Context is a stack of selectors, like element names and class or id attributes.
+// It describes the hierarchy in a HTML document.
 type Context []string
 
+// Match `#012` or `#001122`, `rgb(0,1,2)` and `rgb(0%,1%,2%)`
 var reHex = regexp.MustCompile(`^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$`)
 var reRGB = regexp.MustCompile(`(?i)rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)`)
 var reRGBPerc = regexp.MustCompile(`(?i)rgb\(\s*([0-9]{1,3})%\s*,\s*([0-9]{1,3})%\s*,\s*([0-9]{1,3})%\s*\)`)
 
+// Push a selector on the stack.
 func (c *Context) Push(ctx string) {
 	*c = append(*c, ctx)
 }
+
+// Pop a selector off the stack. Returns an error when the stack is empty.
 func (c *Context) Pop() (string, error) {
 	l := len(*c)
 	if l == 0 {
@@ -39,10 +47,13 @@ func (c *Context) Pop() (string, error) {
 	*c = (*c)[:l-1]
 	return ctx, nil
 }
+
+// String representation of a Context stack.
 func (c Context) String() string {
 	return strings.Join(c, " > ")
 }
 
+// New ColorMention of a color for a property at a certain selector.
 func New(c *colorful.Color, property, selector string) *ColorMention {
 	return &ColorMention{
 		Color:    c,
@@ -51,7 +62,7 @@ func New(c *colorful.Color, property, selector string) *ColorMention {
 	}
 }
 
-// Extract colors from "style" attributes and elements.
+// ParseHTML extract colors from "style" attributes and elements.
 func ParseHTML(s string) ([]*ColorMention, error) {
 	r := strings.NewReader(s)
 	doc, err := html.Parse(r)
@@ -96,7 +107,7 @@ func ParseHTML(s string) ([]*ColorMention, error) {
 	return mentions, nil
 }
 
-// Extract colors from a full CSS stylesheet.
+// ParseStylesheet extracts colors from a full CSS stylesheet.
 func ParseStylesheet(sheet string) []*ColorMention {
 	p := css.NewParser(strings.NewReader(sheet), false)
 	var selector string
@@ -129,7 +140,7 @@ func tokenString(t []css.Token) string {
 	return s
 }
 
-// Extracts ColorMentions from an inline CSS (i.e. a style attribute).
+// parseStyleAttribute extracts ColorMentions from an inline CSS (i.e. a style attribute).
 func parseStyleAttribute(s string, selector string) []*ColorMention {
 	p := css.NewParser(strings.NewReader(s), true)
 	var cms []*ColorMention
@@ -149,7 +160,7 @@ func parseStyleAttribute(s string, selector string) []*ColorMention {
 	return cms
 }
 
-// Attempts to extract a color from list of CSS tokens.
+// parseColor attempts to extract a color from list of CSS tokens.
 // It is expected that the Tokens come from a Declaration.
 func parseColor(t []css.Token) (c *colorful.Color, ok bool) {
 	s := tokenString(t)
