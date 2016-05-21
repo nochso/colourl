@@ -29,8 +29,20 @@ type Context []string
 
 // Match `#012` or `#001122`, `rgb(0,1,2)` and `rgb(0%,1%,2%)`
 var reHex = regexp.MustCompile(`^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$`)
-var reRGB = regexp.MustCompile(`(?i)rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)`)
-var reRGBPerc = regexp.MustCompile(`(?i)rgb\(\s*([0-9]{1,3})%\s*,\s*([0-9]{1,3})%\s*,\s*([0-9]{1,3})%\s*\)`)
+var reRGB = regexp.MustCompile(`(?i)rgb\(` +
+	// Allow whitespace like *0*,*
+	`\s*([0-9]{1,3})\s*,` +
+	`\s*([0-9]{1,3})\s*,` +
+	`\s*([0-9]{1,3})\s*` +
+	`\)`,
+)
+var reRGBPerc = regexp.MustCompile(`(?i)rgb\(` +
+	// Allow whitespace like *0%*,*
+	`\s*([0-9]{1,3})%\s*,` +
+	`\s*([0-9]{1,3})%\s*,` +
+	`\s*([0-9]{1,3})%\s*` +
+	`\)`,
+)
 
 // Push a selector on the stack.
 func (c *Context) Push(ctx string) {
