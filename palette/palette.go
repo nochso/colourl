@@ -54,7 +54,7 @@ func Group(cml *css.CML, scorer Scorer) Palette {
 	// Map hex color to index in Palette
 	keys := map[string]int{}
 	for _, cm := range cml.Mentions {
-		score := scorer.Score(cm)
+		score := scorer.Score(cml, cm)
 		k, ok := keys[cm.Color.Hex()]
 		if ok { // Add score to known color
 			pal[k].Score += score
