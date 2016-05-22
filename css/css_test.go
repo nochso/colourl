@@ -45,6 +45,10 @@ var testsHtml = []struct {
 		``,
 		[]*ColorMention{},
 	},
+	{
+		`<div style="color: invalid"></div>`,
+		[]*ColorMention{},
+	},
 }
 
 func ExampleParseHTML() {
