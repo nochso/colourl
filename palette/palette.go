@@ -17,6 +17,14 @@ type ColorScore struct {
 // The score is calculated by anything that implements the palette.Score interface.
 type Palette []*ColorScore
 
+// Trim returns a new Palette with max amount of colors.
+func (p Palette) Trim(max int) Palette {
+	if len(p) > max {
+		return p[:max]
+	}
+	return p[:]
+}
+
 func (p Palette) Len() int      { return len(p) }
 func (p Palette) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 func (p Palette) Less(i, j int) bool {

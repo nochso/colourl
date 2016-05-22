@@ -39,6 +39,29 @@ func TestNew(t *testing.T) {
 	}
 }
 
+func TestPalette_Trim(t *testing.T) {
+	p, err := New("http://localhost:9595/mixed.html", &SumScore{})
+	if err != nil {
+		t.Error(err)
+	}
+	if len(p) != 3 {
+		t.Errorf("Bad test setup: Expecting at least 2 colors, got %d", len(p))
+	}
+
+	p = p.Trim(100)
+	if len(p) != 3 {
+		t.Errorf("Expecting a Palette with 3 colors, got %d", len(p))
+	}
+
+	p = p.Trim(1)
+	if len(p) != 1 {
+		t.Errorf("Expecting a trimmed Palette with 1 color, got %d", len(p))
+	}
+	if p[0].Color.Hex() != "#000102" {
+		t.Errorf("Expecting most popular color #000102, got %s", p[0].Color.Hex())
+	}
+}
+
 func TestNew_ErrorGET(t *testing.T) {
 	_, err := New("invalid url", nil)
 	if err == nil {
