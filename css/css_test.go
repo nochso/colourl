@@ -6,6 +6,7 @@ import (
 
 	"fmt"
 	"github.com/lucasb-eyer/go-colorful"
+	"github.com/nochso/colourl/page"
 )
 
 func init() {
@@ -88,6 +89,20 @@ func TestParseHtml(t *testing.T) {
 				t.Errorf("Test #%d expected selector %s for ColorMention #%d, got %s", ti, tt.out[ci].Selector, ci, cm.Selector)
 			}
 		}
+	}
+}
+
+func TestParsePage(t *testing.T) {
+	p := &page.Page{
+		HTML: &page.File{Body: `<div style="color:red"></div>`},
+		CSS:  []*page.File{&page.File{Body: "body{color:blue}"}},
+	}
+	cms, err := ParsePage(p)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(cms) != 2 {
+		t.Errorf("Expecting 2 ColorMentions, got %d", len(cms))
 	}
 }
 
