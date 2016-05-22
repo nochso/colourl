@@ -36,24 +36,24 @@ func New(url string, scorer Scorer) (Palette, error) {
 	if err != nil {
 		return nil, err
 	}
-	cm, err := css.ParsePage(pg)
+	cml, err := css.ParsePage(pg)
 	if err != nil {
 		return nil, err
 	}
-	return Group(cm, scorer), nil
+	return Group(cml, scorer), nil
 }
 
-// Group a list of ColorMentions as a Palette.
-// ColorMentions are grouped by color and scored with a Scorer implementation.
+// Group a CML (ColorMention list) as a Palette.
+// Mentions are grouped by color and scored with the specified Scorer implementation.
 // If scorer is nil, it will fall back on palette.SumScore
-func Group(cms []*css.ColorMention, scorer Scorer) Palette {
+func Group(cml *css.CML, scorer Scorer) Palette {
 	pal := Palette{}
 	if scorer == nil {
 		scorer = &SumScore{}
 	}
 	// Map hex color to index in Palette
 	keys := map[string]int{}
-	for _, cm := range cms {
+	for _, cm := range cml.Mentions {
 		score := scorer.Score(cm)
 		k, ok := keys[cm.Color.Hex()]
 		if ok { // Add score to known color

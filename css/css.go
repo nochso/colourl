@@ -11,6 +11,7 @@ import (
 	"github.com/nochso/colourl/page"
 	"github.com/tdewolff/parse/css"
 	"golang.org/x/net/html"
+	"net/url"
 )
 
 // ColorMention is a single occurrence of a color in a certain context.
@@ -22,6 +23,13 @@ type ColorMention struct {
 	// Selectors for inline CSS are based on Context structs.
 	// Otherwise the typical CSS selector is used.
 	Selector string
+}
+
+// CML ColorMention List
+type CML struct {
+	// URL where the colors are from
+	URL      *url.URL
+	Mentions []*ColorMention
 }
 
 // Context is a stack of selectors, like element names and class or id attributes.
@@ -75,15 +83,17 @@ func New(c *colorful.Color, property, selector string) *ColorMention {
 	}
 }
 
-func ParsePage(p *page.Page) ([]*ColorMention, error) {
-	cm, err := ParseHTML(p.HTML.Body)
+func ParsePage(p *page.Page) (*CML, error) {
+	cml := &CML{URL: p.HTML.URL}
+	var err error
+	cml.Mentions, err = ParseHTML(p.HTML.Body)
 	if err != nil {
 		return nil, err
 	}
 	for _, css := range p.CSS {
-		cm = append(cm, ParseStylesheet(css.Body)...)
+		cml.Mentions = append(cml.Mentions, ParseStylesheet(css.Body)...)
 	}
-	return cm, nil
+	return cml, nil
 }
 
 // ParseHTML extract colors from "style" attributes and elements.
