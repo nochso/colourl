@@ -40,6 +40,10 @@ var testsHtml = []struct {
 			New(mustHex("#a9a9a9"), "color", ".named"),
 		},
 	},
+	{
+		``,
+		[]*ColorMention{},
+	},
 }
 
 func ExampleParseHTML() {
@@ -84,5 +88,26 @@ func TestParseHtml(t *testing.T) {
 				t.Errorf("Test #%d expected selector %s for ColorMention #%d, got %s", ti, tt.out[ci].Selector, ci, cm.Selector)
 			}
 		}
+	}
+}
+
+func TestContext_Push(t *testing.T) {
+	c := Context{}
+	c.Push("1")
+	c.Push("2")
+	if c.String() != "1 > 2" {
+		t.Error("Context.String() should join using ' > '")
+	}
+	v, _ := c.Pop()
+	if v != "2" {
+		t.Error("Stack must pop the latest pushed value")
+	}
+}
+
+func TestContext_Pop_Error(t *testing.T) {
+	c := Context{}
+	_, err := c.Pop()
+	if err == nil {
+		t.Error("Popping from an empty stack must return an error")
 	}
 }
