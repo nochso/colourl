@@ -45,8 +45,12 @@ func New(url string, scorer Scorer) (Palette, error) {
 
 // Group a list of ColorMentions as a Palette.
 // ColorMentions are grouped by color and scored with a Scorer implementation.
+// If scorer is nil, it will fall back on palette.SumScore
 func Group(cms []*css.ColorMention, scorer Scorer) Palette {
 	pal := Palette{}
+	if scorer == nil {
+		scorer = &SumScore{}
+	}
 	// Map hex color to index in Palette
 	keys := map[string]int{}
 	for _, cm := range cms {
