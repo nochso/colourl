@@ -83,6 +83,7 @@ func New(c *colorful.Color, property, selector string) *ColorMention {
 	}
 }
 
+// ParsePage returns a CML containing all CSS colors.
 func ParsePage(p *page.Page) (*CML, error) {
 	cml := &CML{URL: p.HTML.URL}
 	var err error
