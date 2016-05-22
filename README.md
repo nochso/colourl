@@ -1,5 +1,5 @@
 # colourl
-[![GoDoc](https://godoc.org/github.com/nochso/colourl?status.svg)](https://godoc.org/github.com/nochso/colourl)
+[![API documentation](https://img.shields.io/badge/gowalker-docs-blue.svg)](https://gowalker.org/github.com/nochso/colourl)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nochso/colourl)](https://goreportcard.com/report/github.com/nochso/colourl)
 [![Build Status](https://travis-ci.org/nochso/colourl.svg?branch=master)](https://travis-ci.org/nochso/colourl)
 [![Coverage Status](https://coveralls.io/repos/github/nochso/colourl/badge.svg?branch=master)](https://coveralls.io/github/nochso/colourl?branch=master)
