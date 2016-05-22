@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/lucasb-eyer/go-colorful"
+	"github.com/nochso/colourl/page"
 	"github.com/tdewolff/parse/css"
 	"golang.org/x/net/html"
 )
@@ -72,6 +73,17 @@ func New(c *colorful.Color, property, selector string) *ColorMention {
 		Property: property,
 		Selector: selector,
 	}
+}
+
+func ParsePage(p *page.Page) ([]*ColorMention, error) {
+	cm, err := ParseHTML(p.HTML.Body)
+	if err != nil {
+		return nil, err
+	}
+	for _, css := range p.CSS {
+		cm = append(cm, ParseStylesheet(css.Body)...)
+	}
+	return cm, nil
 }
 
 // ParseHTML extract colors from "style" attributes and elements.
