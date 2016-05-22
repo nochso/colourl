@@ -1,6 +1,8 @@
 package palette
 
 import (
+	"github.com/lucasb-eyer/go-colorful"
+	"github.com/nochso/colourl/css"
 	"log"
 	"net/http"
 	"testing"
@@ -34,5 +36,23 @@ func TestNew(t *testing.T) {
 		if c.Color.Hex() != exp[i].hex {
 			t.Errorf("Expecting color %s, got %s", exp[i].hex, c.Color.Hex())
 		}
+	}
+}
+
+func TestNew_ErrorGET(t *testing.T) {
+	_, err := New("invalid url", nil)
+	if err == nil {
+		t.Error("Expecting error because of invalid URL")
+	}
+}
+
+func TestGroup_ScorerDefaultsToSumScorer(t *testing.T) {
+	c := colorful.FastHappyColor()
+	cml := &css.CML{
+		Mentions: []*css.ColorMention{&css.ColorMention{Color: &c}},
+	}
+	p := Group(cml, nil)
+	if p[0].Score != 1 {
+		t.Fatalf("Expecting score of 1, got %d", p[0].Score)
 	}
 }
