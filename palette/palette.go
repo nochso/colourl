@@ -18,11 +18,40 @@ type ColorScore struct {
 type Palette []*ColorScore
 
 // Trim returns a new Palette with max amount of colors.
+// Boring colors are ignored if possible.
 func (p Palette) Trim(max int) Palette {
-	if len(p) > max {
-		return p[:max]
+	white, _ := colorful.Hex("#ffffff")
+	black, _ := colorful.Hex("#000000")
+	count := len(p)
+	max = minInt(max, count)
+	scores := make([]*ColorScore, max)
+	scoreCount := 0
+	for i, c := range p {
+		if scoreCount == max {
+			break
+		}
+		if count-i > max-scoreCount {
+			// Ignore gray/low saturation
+			_, s, _ := c.Color.Hsv()
+			if s < 0.1 {
+				continue
+			}
+			// Ignore almost white or black
+			if c.Color.DistanceCIE76(white) <= 0.05 || c.Color.DistanceCIE76(black) <= 0.05 {
+				continue
+			}
+		}
+		scores[scoreCount] = c
+		scoreCount++
 	}
-	return p[:]
+	return scores
+}
+
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 func (p Palette) Len() int      { return len(p) }
