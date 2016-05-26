@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/nochso/colourl/cache"
 	"golang.org/x/net/html"
 )
 
@@ -70,6 +71,12 @@ func NewFile(url string) (*File, error) {
 	}
 	// Remember the original URL. It might change afterwards because of redirects.
 	f := &File{URL: req.URL}
+
+	v, err := cache.Page.Get(url)
+	if err == nil {
+		f.Body = v.(string)
+		return f, nil
+	}
 	r, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -83,6 +90,7 @@ func NewFile(url string) (*File, error) {
 		return f, err
 	}
 	f.Body = string(b)
+	cache.Page.Set(url, f.Body)
 	return f, nil
 }
 
