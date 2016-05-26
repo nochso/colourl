@@ -98,7 +98,7 @@ func (p *Page) cssURLs() []*url.URL {
 			break
 		}
 		// Look for <link> elements
-		if tt != html.StartTagToken {
+		if tt != html.StartTagToken && tt != html.SelfClosingTagToken {
 			continue
 		}
 		t = tokenizer.Token()
