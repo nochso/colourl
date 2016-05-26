@@ -54,6 +54,15 @@ func minInt(a, b int) int {
 	return b
 }
 
+// ScoreSum returns the sum of the score of all ColorScores.
+func (p Palette) ScoreSum() int {
+	sum := 0
+	for _, cs := range p {
+		sum += cs.Score
+	}
+	return sum
+}
+
 func (p Palette) Len() int      { return len(p) }
 func (p Palette) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 func (p Palette) Less(i, j int) bool {
