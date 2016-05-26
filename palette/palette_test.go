@@ -57,8 +57,8 @@ func TestPalette_Trim(t *testing.T) {
 	if len(p) != 1 {
 		t.Errorf("Expecting a trimmed Palette with 1 color, got %d", len(p))
 	}
-	if p[0].Color.Hex() != "#000102" {
-		t.Errorf("Expecting most popular color #000102, got %s", p[0].Color.Hex())
+	if p[0].Color.Hex() != "#ff0000" {
+		t.Errorf("Expecting first non-boring color #000102, got %s", p[0].Color.Hex())
 	}
 }
 
