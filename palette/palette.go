@@ -2,6 +2,7 @@
 package palette
 
 import (
+	"fmt"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/nochso/colourl/css"
 	"github.com/nochso/colourl/page"
@@ -74,6 +75,18 @@ func (p Palette) Less(i, j int) bool {
 }
 
 var _ sort.Interface = (*Palette)(nil)
+
+func (p Palette) String() string {
+	var s string
+	for i, c := range p {
+		s += fmt.Sprintf("%d %s\n", i+1, c)
+	}
+	return s
+}
+
+func (c ColorScore) String() string {
+	return fmt.Sprintf("%s %d", c.Color.Hex(), c.Score)
+}
 
 // New creates a Palette from a websites CSS colors.
 // Colors are sorted by their score.
