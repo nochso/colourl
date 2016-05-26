@@ -5,6 +5,11 @@ import (
 	"github.com/ajstarks/svgo"
 )
 
+var Painters = map[string]Painter{
+	"band":   &BandPainter{},
+	"circle": &CirclePainter{},
+}
+
 type Painter interface {
 	Paint(p *Palette, s *svg.SVG, job PaintJob)
 }
