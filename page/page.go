@@ -99,11 +99,14 @@ func NewFile(url string) (*File, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer r.Body.Close()
-	b, err := ioutil.ReadAll(r.Body)
+	// Limit size of response body
+	lrc := NewLimitedReadCloser(r.Body, MaxFileSize)
+	defer lrc.Close()
+
 	if r.StatusCode != http.StatusOK { // Handle anything but 200/OK as an error
 		return f, fmt.Errorf("HTTP GET '%s': %s", url, r.Status)
 	}
+	b, err := ioutil.ReadAll(lrc)
 	if err != nil {
 		return f, err
 	}
