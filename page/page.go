@@ -14,6 +14,20 @@ import (
 	"golang.org/x/net/html"
 )
 
+// Default limits for fetching a Page.
+var (
+	DefaultMaxPageSize  int64 = 1024 * 1024 * 10
+	DefaultMaxFileCount int   = 15
+	DefaultMaxFileSize  int64 = 1024 * 1024 * 5
+)
+
+// Limits for fetching a Page.
+var (
+	MaxPageSize  = DefaultMaxPageSize
+	MaxFileCount = DefaultMaxFileCount
+	MaxFileSize  = DefaultMaxFileSize
+)
+
 // Page contains HTML and linked CSS files for a specific URL.
 type Page struct {
 	HTML *File
