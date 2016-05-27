@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strconv"
 
 	"net/http"
 	"net/url"
@@ -102,6 +103,13 @@ func NewFile(url string) (*File, error) {
 	// Limit size of response body
 	lrc := NewLimitedReadCloser(r.Body, MaxFileSize)
 	defer lrc.Close()
+
+	cl, err := strconv.ParseInt(r.Header.Get("Content-Length"), 10, 0)
+	if err == nil {
+		if cl > MaxFileSize {
+			return nil, fmt.Errorf("Response Content-Length %d exceeds MaxFileSize %d", cl, MaxFileSize)
+		}
+	}
 
 	if r.StatusCode != http.StatusOK { // Handle anything but 200/OK as an error
 		return f, fmt.Errorf("HTTP GET '%s': %s", url, r.Status)
