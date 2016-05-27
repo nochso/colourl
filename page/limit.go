@@ -5,27 +5,27 @@ import (
 	"io"
 )
 
-// LimitedReadCloser reads at most N bytes and returns an error when more than
+// LimitedReader reads at most N bytes and returns an error when more than
 // N bytes could have been read.
-type LimitedReadCloser struct {
-	io.ReadCloser
+type LimitedReader struct {
+	io.Reader
 	N int64
 }
 
-// NewLimitedReadCloser wraps a ReadCloser and limits the amount of bytes
+// NewLimitedReadCloser wraps a Reader and limits the amount of bytes
 // it can read before returning an error.
-func NewLimitedReadCloser(rc io.ReadCloser, l int64) *LimitedReadCloser {
-	return &LimitedReadCloser{rc, l}
+func NewLimitedReader(rc io.Reader, l int64) *LimitedReader {
+	return &LimitedReader{rc, l}
 }
 
-func (l *LimitedReadCloser) Read(p []byte) (n int, err error) {
+func (l *LimitedReader) Read(p []byte) (n int, err error) {
 	if l.N <= 0 {
 		return 0, errors.New("http: response body too large")
 	}
 	if int64(len(p)) > l.N {
 		p = p[0:l.N]
 	}
-	n, err = l.ReadCloser.Read(p)
+	n, err = l.Reader.Read(p)
 	l.N -= int64(n)
 	return
 }

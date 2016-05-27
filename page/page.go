@@ -104,8 +104,8 @@ func (p *Page) NewFile(url string) (*File, error) {
 		return nil, err
 	}
 	// Limit size of response body
-	lrc := NewLimitedReadCloser(r.Body, MaxFileSize)
-	defer lrc.Close()
+	lrc := NewLimitedReader(r.Body, MaxFileSize)
+	defer r.Body.Close()
 
 	// Abort early if reported size would exceed limits
 	cl, err := strconv.ParseInt(r.Header.Get("Content-Length"), 10, 0)
