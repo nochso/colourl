@@ -66,7 +66,7 @@ func (p *Page) Size() int64 {
 // Any linked CSS stylesheets will be downloaded.
 func New(u string) (*Page, error) {
 	p := &Page{}
-	html, err := NewFile(u) // Get HTML body
+	html, err := p.NewFile(u) // Get HTML body
 	if err != nil {
 		return nil, err
 	}
@@ -75,10 +75,7 @@ func New(u string) (*Page, error) {
 		if p.Count() >= MaxFileCount {
 			break
 		}
-		if p.Size() >= MaxPageSize { // Stop if the complete page grows too large
-			break
-		}
-		css, err := NewFile(c.String())
+		css, err := p.NewFile(c.String())
 		if err != nil { // Log and continue on error
 			log.Printf("Warning: Could not get CSS mentioned in '%s': %s", p.HTML.URL, err)
 		} else {
@@ -89,7 +86,7 @@ func New(u string) (*Page, error) {
 }
 
 // NewFile creates a new File by GETting it from url.
-func NewFile(url string) (*File, error) {
+func (p *Page) NewFile(url string) (*File, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -110,10 +107,12 @@ func NewFile(url string) (*File, error) {
 	lrc := NewLimitedReadCloser(r.Body, MaxFileSize)
 	defer lrc.Close()
 
+	// Abort early if reported size would exceed limits
 	cl, err := strconv.ParseInt(r.Header.Get("Content-Length"), 10, 0)
 	if err == nil {
-		if cl > MaxFileSize {
-			return nil, fmt.Errorf("Response Content-Length %d exceeds MaxFileSize %d", cl, MaxFileSize)
+		err = p.checkSize(cl)
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -125,8 +124,24 @@ func NewFile(url string) (*File, error) {
 		return f, err
 	}
 	f.Body = string(b)
+
+	// Abort if actual size exceeds limits
+	err = p.checkSize(int64(len(f.Body)))
+	if err != nil {
+		return nil, err
+	}
 	cache.Page.Set(url, f.Body)
 	return f, nil
+}
+
+func (p *Page) checkSize(length int64) error {
+	if length > MaxFileSize {
+		return fmt.Errorf("Response body with length %d exceeds MaxFileSize %d", length, MaxFileSize)
+	}
+	if p.Size()+length > MaxPageSize {
+		return fmt.Errorf("Response body with length %d exceeds MaxPageSize %d of Page with current size %d", length, MaxPageSize, p.Size())
+	}
+	return nil
 }
 
 // cssURLs extracts URLs to CSS files embedded in a Page's HTML body.
