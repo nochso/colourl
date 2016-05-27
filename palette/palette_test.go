@@ -73,7 +73,7 @@ func TestNew_ErrorGET(t *testing.T) {
 func TestGroup_ScorerDefaultsToSumScorer(t *testing.T) {
 	c := colorful.FastHappyColor()
 	cml := &css.CML{
-		Mentions: []*css.ColorMention{&css.ColorMention{Color: &c}},
+		Mentions: []*css.ColorMention{{Color: &c}},
 	}
 	p := Group(cml, nil)
 	if p[0].Score != 1 {

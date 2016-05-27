@@ -99,7 +99,7 @@ func TestParseHtml(t *testing.T) {
 func TestParsePage(t *testing.T) {
 	p := &page.Page{
 		HTML: &page.File{Body: `<div style="color:red"></div>`},
-		CSS:  []*page.File{&page.File{Body: "body{color:blue}"}},
+		CSS:  []*page.File{{Body: "body{color:blue}"}},
 	}
 	cml, err := ParsePage(p)
 	if err != nil {
