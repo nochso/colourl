@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// Page is an in-memory cache for Page structs.
+// Uses URLs as keys.
 var Page gcache.Cache
 
 func init() {

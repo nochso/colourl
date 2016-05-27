@@ -15,6 +15,7 @@ type Scorer interface {
 // This way colors are simply scored by their frequency.
 type SumScore struct{}
 
+// Score implements palette.Scorer
 func (sc *SumScore) Score(cml *css.CML, cm *css.ColorMention) int {
 	return 1
 }

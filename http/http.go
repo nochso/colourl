@@ -1,3 +1,4 @@
+// Package http provides HTTP handlers for drawing SVGs.
 package http
 
 //go:generate go-bindata -pkg $GOPACKAGE -prefix asset/ asset/
@@ -23,6 +24,9 @@ func init() {
 	template.Must(tmpl.Parse(string(b)))
 }
 
+// SVGHandler returns a SVG based on GET parameters.
+// See NewPaintJob() for parsing options.
+// See NewPainter() for SVG style / Painter.
 func SVGHandler(w http.ResponseWriter, req *http.Request) {
 	v := req.URL.Query()
 	url := v.Get("url")
@@ -41,6 +45,7 @@ func SVGHandler(w http.ResponseWriter, req *http.Request) {
 	w.Write(p.Paint(NewPainter(v), job))
 }
 
+// IndexHandler shows a basic wizard form with all available options.
 func IndexHandler(w http.ResponseWriter, req *http.Request) {
 	err := tmpl.ExecuteTemplate(w, "index.html", nil)
 	if err != nil {
@@ -48,6 +53,7 @@ func IndexHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// NewPaintJob creates a PaintJob based on GET parameters.
 func NewPaintJob(v url.Values) palette.PaintJob {
 	return palette.PaintJob{
 		Max:    parseInt(v.Get("max"), 5, 1, 50),
@@ -56,6 +62,7 @@ func NewPaintJob(v url.Values) palette.PaintJob {
 	}
 }
 
+// NewPainter picks a Painter based on the GET parameter "style".
 func NewPainter(v url.Values) (p palette.Painter) {
 	p, ok := palette.Painters[v.Get("style")]
 	if !ok {

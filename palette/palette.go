@@ -9,6 +9,7 @@ import (
 	"sort"
 )
 
+// ColorScore is the resulting score for a specific color.
 type ColorScore struct {
 	Score int
 	Color *colorful.Color
