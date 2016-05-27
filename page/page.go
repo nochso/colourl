@@ -43,13 +43,19 @@ type File struct {
 
 // Count returns the amount of files.
 func (p *Page) Count() int {
-	return 1 + len(p.CSS)
+	c := len(p.CSS)
+	if p.HTML != nil {
+		c++
+	}
+	return c
 }
 
 // Size returns the length of files.
 func (p *Page) Size() int64 {
 	var s int64
-	s = int64(len(p.HTML.Body))
+	if p.HTML != nil {
+		s += int64(len(p.HTML.Body))
+	}
 	for _, c := range p.CSS {
 		s += int64(len(c.Body))
 	}
