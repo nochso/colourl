@@ -65,6 +65,9 @@ func New(u string) (*Page, error) {
 	}
 	p.HTML = html
 	for _, c := range p.cssURLs() { // Iterate over links to CSS files
+		if p.Count() >= MaxFileCount {
+			break
+		}
 		if p.Size() >= MaxPageSize { // Stop if the complete page grows too large
 			break
 		}
