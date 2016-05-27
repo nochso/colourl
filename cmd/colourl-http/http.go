@@ -18,6 +18,7 @@ func init() {
 func main() {
 	flag.Parse()
 	log.Printf("colourl-http port=%d", port)
+	http.HandleFunc("/", chttpd.IndexHandler)
 	http.HandleFunc("/svg", chttpd.SVGHandler)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }

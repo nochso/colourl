@@ -1,13 +1,27 @@
 package http
 
+//go:generate go-bindata -pkg $GOPACKAGE -prefix asset/ asset/
+
 import (
 	"github.com/nochso/colourl/palette"
+	"html/template"
 	"net/http"
 	"net/url"
 	"strconv"
 )
 
 var scorer = &palette.SumScore{}
+
+var tmpl *template.Template
+
+func init() {
+	b, err := Asset("index.html")
+	if err != nil {
+		panic(err)
+	}
+	tmpl = template.New("index.html")
+	template.Must(tmpl.Parse(string(b)))
+}
 
 func SVGHandler(w http.ResponseWriter, req *http.Request) {
 	v := req.URL.Query()
@@ -25,6 +39,13 @@ func SVGHandler(w http.ResponseWriter, req *http.Request) {
 	job := NewPaintJob(v)
 	w.Header().Set("Content-Type", "image/svg+xml")
 	w.Write(p.Paint(NewPainter(v), job))
+}
+
+func IndexHandler(w http.ResponseWriter, req *http.Request) {
+	err := tmpl.ExecuteTemplate(w, "index.html", nil)
+	if err != nil {
+		http.Error(w, "Unable to render template: "+err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func NewPaintJob(v url.Values) palette.PaintJob {
