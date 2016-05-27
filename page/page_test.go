@@ -2,31 +2,31 @@ package page
 
 import (
 	"fmt"
-	"log"
 	"net/http"
+	"net/http/httptest"
 	"testing"
-	"time"
 )
 
-func init() {
-	go func() {
-		log.Fatal(http.ListenAndServe(":9595", http.FileServer(http.Dir("test"))))
-	}()
-	time.Sleep(time.Millisecond * 20)
+func serve() *httptest.Server {
+	return httptest.NewServer(http.FileServer(http.Dir("test")))
 }
 
 func ExampleNew() {
-	p, _ := New("http://localhost:9595/external.html")
-	fmt.Printf("%s: %s\n", p.HTML.URL, p.HTML.Body)
-	fmt.Printf("%s: %s\n", p.CSS[0].URL, p.CSS[0].Body)
+	s := serve()
+	defer s.Close()
+	p, _ := New(s.URL + "/external.html")
+	fmt.Printf("%s: %s\n", p.HTML.URL.Path, p.HTML.Body)
+	fmt.Printf("%s: %s\n", p.CSS[0].URL.Path, p.CSS[0].Body)
 	// Output:
-	// http://localhost:9595/external.html: <link rel="stylesheet" href="style.css">
-	// http://localhost:9595/style.css: body { color: #c0c0c0 }
+	// /external.html: <link rel="stylesheet" href="style.css">
+	// /style.css: body { color: #c0c0c0 }
 }
 
 // Test fetching a HTML file with no external CSS.
 func TestNewSimple(t *testing.T) {
-	p, err := New("http://localhost:9595/embedded.html")
+	s := serve()
+	defer s.Close()
+	p, err := New(s.URL + "/embedded.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,7 +40,9 @@ func TestNewSimple(t *testing.T) {
 
 // Test fetching a HTML file with one external CSS file.
 func TestNewExternal(t *testing.T) {
-	p, err := New("http://localhost:9595/external.html")
+	s := serve()
+	defer s.Close()
+	p, err := New(s.URL + "/external.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,21 +61,27 @@ func TestNewExternal(t *testing.T) {
 }
 
 func TestNewErrorWhenHTMLMissing(t *testing.T) {
-	_, err := New("http://localhost:9595/404.html")
+	s := serve()
+	defer s.Close()
+	_, err := New(s.URL + "/404.html")
 	if err == nil {
 		t.Fatal("Must return error on anything but HTTP status 200")
 	}
 }
 
 func TestNewNoErrorWhenMissingExternal(t *testing.T) {
-	_, err := New("http://localhost:9595/missingexternal.html")
+	s := serve()
+	defer s.Close()
+	_, err := New(s.URL + "/missingexternal.html")
 	if err != nil {
 		t.Fatal("Must not return error when missing external CSS files")
 	}
 }
 
 func TestNewNoErrorWhenInvalidExternalURL(t *testing.T) {
-	_, err := New("http://localhost:9595/invalidexternal.html")
+	s := serve()
+	defer s.Close()
+	_, err := New(s.URL + "/invalidexternal.html")
 	if err != nil {
 		t.Fatalf("Must not return error when external URLs are invalid: %s", err)
 	}

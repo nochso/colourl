@@ -1,23 +1,22 @@
 package palette
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/nochso/colourl/css"
-	"log"
-	"net/http"
-	"testing"
-	"time"
 )
 
-func init() {
-	go func() {
-		log.Fatal(http.ListenAndServe(":9595", http.FileServer(http.Dir("test"))))
-	}()
-	time.Sleep(time.Millisecond * 20)
+func serve() *httptest.Server {
+	return httptest.NewServer(http.FileServer(http.Dir("test")))
 }
 
 func TestNew(t *testing.T) {
-	p, err := New("http://localhost:9595/mixed.html", &SumScore{})
+	s := serve()
+	defer s.Close()
+	p, err := New(s.URL+"/mixed.html", &SumScore{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -40,7 +39,9 @@ func TestNew(t *testing.T) {
 }
 
 func TestPalette_Trim(t *testing.T) {
-	p, err := New("http://localhost:9595/mixed.html", &SumScore{})
+	s := serve()
+	defer s.Close()
+	p, err := New(s.URL+"/mixed.html", &SumScore{})
 	if err != nil {
 		t.Error(err)
 	}
