@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>colourl HTTP API</title>
+    <style>
+        body {
+            font-family: 'Open Sans', 'Segoe UI', sans-serif;
+        }
+        input, select {
+            display: block;
+            float: left;
+        }
+        label {
+            float: left;
+            clear: both;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+<div style="width: 500px; margin: auto">
+    <form method="get" action="svg">
+        <label>URL</label>
+        <input type="text" name="url"/>
+
+        <label>Width</label>
+        <input type="text" name="w"/>
+
+        <label>Height</label>
+        <input type="text" name="h"/>
+
+        <label>Max colors</label>
+        <input type="text" name="max"/>
+
+        <label>Style</label>
+        <select name="style">
+            <option>band</option>
+            <option>circle</option>
+        </select>
+
+        <label></label>
+        <input type="submit" value="Draw">
+    </form>
+</div>
+</body>
+</html>
