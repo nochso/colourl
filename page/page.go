@@ -46,10 +46,11 @@ func (p *Page) Count() int {
 }
 
 // Size returns the length of files.
-func (p *Page) Size() int {
-	s := len(p.HTML.Body)
+func (p *Page) Size() int64 {
+	var s int64
+	s = int64(len(p.HTML.Body))
 	for _, c := range p.CSS {
-		s += len(c.Body)
+		s += int64(len(c.Body))
 	}
 	return s
 }
