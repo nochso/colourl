@@ -8,19 +8,26 @@ import (
 	"net/http"
 )
 
-var port int
+var (
+	port    int
+	verbose bool
+)
+
 var (
 	Version   string
 	BuildDate string
 )
 
 func init() {
-	flag.IntVar(&port, "port", 9191, "HTTP listening port")
-	flag.IntVar(&port, "p", 9191, "HTTP listening port (shorthand)")
+	flag.IntVar(&port, "p", 9191, "HTTP listening port")
+	flag.BoolVar(&verbose, "v", false, "Enable verbose / debug output")
 }
 
 func main() {
 	flag.Parse()
+	if verbose {
+		log.SetLevel(log.DebugLevel)
+	}
 	log.WithFields(log.Fields{
 		"version":    Version,
 		"build_date": BuildDate,
