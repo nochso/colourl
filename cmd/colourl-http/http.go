@@ -9,6 +9,10 @@ import (
 )
 
 var port int
+var (
+	Version   string
+	BuildDate string
+)
 
 func init() {
 	flag.IntVar(&port, "port", 9191, "HTTP listening port")
