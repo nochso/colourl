@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	log "github.com/Sirupsen/logrus"
 	chttpd "github.com/nochso/colourl/http"
-	"log"
 	"net/http"
 )
 
@@ -21,7 +21,14 @@ func init() {
 
 func main() {
 	flag.Parse()
-	log.Printf("colourl-http port=%d", port)
+	log.WithFields(log.Fields{
+		"version":    Version,
+		"build_date": BuildDate,
+	}).Info("colourl-http")
+	log.WithFields(log.Fields{
+		"port":    port,
+		"verbose": verbose,
+	}).Info("Starting HTTP server")
 	http.HandleFunc("/", chttpd.IndexHandler)
 	http.HandleFunc("/svg", chttpd.SVGHandler)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
