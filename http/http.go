@@ -1,9 +1,10 @@
 // Package http provides HTTP handlers for drawing SVGs.
 package http
 
-//go:generate go-bindata -pkg $GOPACKAGE -prefix asset/ asset/
+//go:generate go-bindata -pkg $GOPACKAGE -prefix asset/ asset/...
 
 import (
+	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/nochso/colourl/palette"
 	"html/template"
 	"net/http"
@@ -45,12 +46,43 @@ func SVGHandler(w http.ResponseWriter, req *http.Request) {
 	w.Write(p.Paint(NewPainter(v), job))
 }
 
-// IndexHandler shows a basic wizard form with all available options.
-func IndexHandler(w http.ResponseWriter, req *http.Request) {
-	err := tmpl.ExecuteTemplate(w, "index.html", nil)
-	if err != nil {
-		http.Error(w, "Unable to render template: "+err.Error(), http.StatusInternalServerError)
-	}
+type IndexView struct {
+	URL      string
+	SVGURL   string
+	Job      palette.PaintJob
+	Painters map[string]palette.Painter
+	Style    string
+}
+
+// IndexMux returns a ServeMux showing a wizard form for creating SVGs with all available options.
+func IndexMux() (m *http.ServeMux) {
+	m = http.NewServeMux()
+	staticFs := http.FileServer(&assetfs.AssetFS{
+		Asset:     Asset,
+		AssetDir:  AssetDir,
+		AssetInfo: AssetInfo,
+		Prefix:    "",
+	})
+	m.Handle("/static/", staticFs)
+	m.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		url := req.URL
+		url.Path += "svg"
+		url.Host = req.Host
+		url.Scheme = "http"
+
+		iv := IndexView{
+			req.URL.Query().Get("url"),
+			url.String(),
+			NewPaintJob(req.URL.Query()),
+			palette.Painters,
+			req.URL.Query().Get("style"),
+		}
+		err := tmpl.ExecuteTemplate(w, "index.html", iv)
+		if err != nil {
+			http.Error(w, "Unable to render template: "+err.Error(), http.StatusInternalServerError)
+		}
+	})
+	return m
 }
 
 // NewPaintJob creates a PaintJob based on GET parameters.

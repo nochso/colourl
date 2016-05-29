@@ -1,0 +1,125 @@
+body {
+    font-family: 'Open Sans', 'DejaVu Sans', 'Segoe UI', sans-serif;
+    color: #333;
+    padding: 0 1rem;
+}
+
+a {
+    color: #0E5A94;
+}
+
+a:hover {
+    color: #0e77b4;
+}
+
+.button:hover, button:hover, input[type="button"]:hover, input[type="reset"]:hover, input[type="submit"]:hover {
+    background-color: #0e77b4;
+}
+
+img {
+    max-width: 100%;
+}
+
+.container {
+    width: 95%;
+    max-width: 600px;
+    margin: auto;
+    float: left;
+}
+
+.center {
+    text-align: center;
+}
+
+pre, code {
+    font-family: 'DejaVu Sans Mono', 'Liberation Mono', 'Consolas', monospace;
+}
+
+.button, button, input[type="button"], input[type="reset"], input[type="submit"] {
+    background-color: #0E5A94;
+    border: 0;
+    border-radius: 0.3rem;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.4rem;
+    padding: 0.4em 0.5em;
+}
+
+/*http://codepen.io/torbencolding/pen/emKMZx*/
+form .field-group {
+    display: flex;
+    margin: 0 0 12px 0;
+    max-width: 500px;
+}
+
+form .field-group label {
+    flex: 1;
+    text-align: right;
+    margin: 0 1.2rem 0 0;
+    /*padding: 2px 0;*/
+    align-self: center;
+}
+
+form .field-group input,
+form .field-group select {
+    flex: 3;
+}
+
+input, select, textarea {
+    padding: .4rem;
+    font-size: 1rem;
+    border: solid 1px #ccc;
+    background: #fff;
+    box-sizing: border-box;
+    border-radius: .3rem;
+}
+
+@media (max-width: 480px) {
+    input, select {
+        width: 100%;
+    }
+
+    form .field-group {
+        display: flex;
+        flex-direction: column;
+        margin: 0 0 6px 0;
+    }
+
+    form .field-group label {
+        padding: 0 0 5px 0;
+        margin: 10px 0 0 0;
+        align-self: flex-start;
+    }
+}
+
+.grid__row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid__item {
+    flex: 1;
+    padding: 12px;
+    /*border: solid 1px #e7e7e7;*/
+}
+
+@media all and (min-width: 480px) {
+    .grid__row--sm {
+        flex-direction: row;
+    }
+}
+
+@media all and (min-width: 720px) {
+    .grid__row--md {
+        flex-direction: row;
+    }
+}
+
+@media all and (min-width: 960px) {
+    .grid__row--lg {
+        flex-direction: row;
+    }
+}

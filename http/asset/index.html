@@ -1,47 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>colourl HTTP API</title>
-    <style>
-        body {
-            font-family: 'Open Sans', 'Segoe UI', sans-serif;
-        }
-        input, select {
-            display: block;
-            float: left;
-        }
-        label {
-            float: left;
-            clear: both;
-            width: 100px;
-        }
-    </style>
+    <link rel="stylesheet" href="static/colourl.css"/>
 </head>
 <body>
-<div style="width: 500px; margin: auto">
-    <form method="get" action="svg">
-        <label>URL</label>
-        <input type="text" name="url"/>
+<div class="center">
+    <div class="grid__row grid__row--lg">
+        <div class="grid__item container">
+            <h1 class="center"><a href="https://github.com/nochso/colourl">Colourl</a></h1>
+            <form method="get">
+                <div class="field-group">
+                    <label>URL</label>
+                    <input type="text" name="url" value="{{.URL}}"/>
+                </div>
 
-        <label>Width</label>
-        <input type="text" name="w"/>
+                <div class="field-group">
+                    <label>Width</label>
+                    <input type="number" name="w" value="{{.Job.Width}}"/>
+                </div>
 
-        <label>Height</label>
-        <input type="text" name="h"/>
-
-        <label>Max colors</label>
-        <input type="text" name="max"/>
-
-        <label>Style</label>
-        <select name="style">
-            <option>band</option>
-            <option>circle</option>
-        </select>
-
-        <label></label>
-        <input type="submit" value="Draw">
-    </form>
+                <div class="field-group">
+                    <label>Height</label>
+                    <input type="number" name="h" value="{{.Job.Height}}"/>
+                </div>
+                <div class="field-group">
+                    <label>Max colors</label>
+                    <input type="number" name="max" value="{{.Job.Max}}"/>
+                </div>
+                <div class="field-group">
+                    <label>Style</label>
+                    <select name="style">
+                        {{range $key, $value := .Painters}}
+                        <option{{if eq $key $.Style }} selected{{end}}>{{$key}}</option>
+                        {{end}}
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label></label>
+                    <input type="submit" value="Draw SVG" class="button-primary">
+                </div>
+                <div class="field-group">
+                    <label><a href="{{.SVGURL}}">SVG URL</a></label>
+                    <input type="text" value="{{.SVGURL}}">
+                </div>
+            </form>
+        </div>
+        <div class="grid__item center">
+            <img src="{{.SVGURL}}">
+        </div>
+    </div>
 </div>
 </body>
 </html>
