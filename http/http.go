@@ -4,7 +4,9 @@ package http
 //go:generate go-bindata -pkg $GOPACKAGE -prefix asset/ asset/...
 
 import (
+	"fmt"
 	"github.com/elazarl/go-bindata-assetfs"
+	"github.com/nochso/colourl/cache"
 	"github.com/nochso/colourl/palette"
 	"html/template"
 	"net/http"
@@ -35,15 +37,30 @@ func SVGHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Missing parameter 'url'", http.StatusBadRequest)
 		return
 	}
+	painter := NewPainter(v)
+	job := NewPaintJob(v)
+	// Look for a cached SVG
+	key := svgKey(v.Get("style"), job)
+	svg, err := cache.SVG.Get(key)
+	if err == nil {
+		w.Header().Set("Content-Type", "image/svg+xml")
+		w.Write(svg.([]byte))
+		return
+	}
 	p, err := palette.New(url, scorer)
 	if err != nil {
 		http.Error(w, "Unable to create a palette: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	job := NewPaintJob(v)
 	w.Header().Set("Content-Type", "image/svg+xml")
-	w.Write(p.Paint(NewPainter(v), job))
+	b := p.Paint(painter, job)
+	cache.SVG.Set(key, b)
+	w.Write(b)
+}
+
+// svgKey creates a key for caching by combining all parameters of a drawing.
+func svgKey(style string, job palette.PaintJob) string {
+	return fmt.Sprintf("svg:%s %d %d %d", style, job.Width, job.Height, job.Max)
 }
 
 type IndexView struct {
