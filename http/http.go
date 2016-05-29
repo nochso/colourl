@@ -71,6 +71,20 @@ type IndexView struct {
 	Style    string
 }
 
+func NewIndexView(req *http.Request) *IndexView {
+	url := req.URL
+	url.Path += "svg"
+	url.Host = req.Host
+	url.Scheme = "http"
+	return &IndexView{
+		req.URL.Query().Get("url"),
+		url.String(),
+		NewPaintJob(req.URL.Query()),
+		palette.Painters,
+		req.URL.Query().Get("style"),
+	}
+}
+
 // IndexMux returns a ServeMux showing a wizard form for creating SVGs with all available options.
 func IndexMux() (m *http.ServeMux) {
 	m = http.NewServeMux()
@@ -82,19 +96,7 @@ func IndexMux() (m *http.ServeMux) {
 	})
 	m.Handle("/static/", staticFs)
 	m.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		url := req.URL
-		url.Path += "svg"
-		url.Host = req.Host
-		url.Scheme = "http"
-
-		iv := IndexView{
-			req.URL.Query().Get("url"),
-			url.String(),
-			NewPaintJob(req.URL.Query()),
-			palette.Painters,
-			req.URL.Query().Get("style"),
-		}
-		err := tmpl.ExecuteTemplate(w, "index.html", iv)
+		err := tmpl.ExecuteTemplate(w, "index.html", NewIndexView(req))
 		if err != nil {
 			http.Error(w, "Unable to render template: "+err.Error(), http.StatusInternalServerError)
 		}
