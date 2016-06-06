@@ -72,13 +72,13 @@ type IndexView struct {
 }
 
 func NewIndexView(req *http.Request) *IndexView {
-	url := *req.URL
-	url.Path += "svg"
-	url.Host = req.Host
-	url.Scheme = "http"
+	svgurl := *req.URL
+	svgurl.Path += "svg"
+	svgurl.Host = req.Host
+	svgurl.Scheme = "http"
 	return &IndexView{
 		req.URL.Query().Get("url"),
-		url.String(),
+		svgurl.String(),
 		NewPaintJob(req.URL.Query()),
 		palette.Painters,
 		req.URL.Query().Get("style"),
