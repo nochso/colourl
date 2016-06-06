@@ -72,7 +72,7 @@ type IndexView struct {
 }
 
 func NewIndexView(req *http.Request) *IndexView {
-	url := req.URL
+	url := *req.URL
 	url.Path += "svg"
 	url.Host = req.Host
 	url.Scheme = "http"
