@@ -3,10 +3,11 @@ package palette
 
 import (
 	"fmt"
+	"sort"
+
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/nochso/colourl/css"
 	"github.com/nochso/colourl/page"
-	"sort"
 )
 
 // ColorScore is the resulting score for a specific color.

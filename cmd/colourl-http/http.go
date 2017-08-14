@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	chttpd "github.com/nochso/colourl/http"
-	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 	"net/http"
 	"time"
+
+	chttpd "github.com/nochso/colourl/http"
+	log "github.com/sirupsen/logrus"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 var (

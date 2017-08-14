@@ -2,6 +2,7 @@ package palette
 
 import (
 	"bytes"
+
 	"github.com/ajstarks/svgo"
 )
 

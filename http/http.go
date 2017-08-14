@@ -5,13 +5,14 @@ package http
 
 import (
 	"fmt"
-	"github.com/elazarl/go-bindata-assetfs"
-	"github.com/nochso/colourl/cache"
-	"github.com/nochso/colourl/palette"
 	"html/template"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/elazarl/go-bindata-assetfs"
+	"github.com/nochso/colourl/cache"
+	"github.com/nochso/colourl/palette"
 )
 
 var scorer = &palette.SumScore{}

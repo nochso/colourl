@@ -1,10 +1,10 @@
 package css
 
 import (
+	"fmt"
 	"log"
 	"testing"
 
-	"fmt"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/nochso/colourl/page"
 )

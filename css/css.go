@@ -3,6 +3,7 @@ package css
 
 import (
 	"errors"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -11,7 +12,6 @@ import (
 	"github.com/nochso/colourl/page"
 	"github.com/tdewolff/parse/css"
 	"golang.org/x/net/html"
-	"net/url"
 )
 
 // ColorMention is a single occurrence of a color in a certain context.

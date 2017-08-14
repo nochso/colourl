@@ -1,8 +1,9 @@
 package cache
 
 import (
-	"github.com/bluele/gcache"
 	"time"
+
+	"github.com/bluele/gcache"
 )
 
 // Page is an in-memory cache for Page structs.

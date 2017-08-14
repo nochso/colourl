@@ -4,14 +4,13 @@ package page
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
-	"strconv"
-
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/nochso/colourl/cache"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/html"
 )
 
