@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	chttpd "github.com/nochso/colourl/http"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 	"net/http"
