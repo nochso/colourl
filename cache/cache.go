@@ -13,7 +13,6 @@ var SVG gcache.Cache
 func init() {
 	Page = gcache.New(500).
 		ARC().
-		EnableGC(time.Hour).
 		Expiration(time.Hour * 24 * 7).
 		Build()
 	SVG = gcache.New(500).
