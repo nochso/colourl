@@ -41,7 +41,7 @@ func SVGHandler(w http.ResponseWriter, req *http.Request) {
 	painter := NewPainter(v)
 	job := NewPaintJob(v)
 	// Look for a cached SVG
-	key := svgKey(v.Get("style"), job)
+	key := svgKey(req.URL, job)
 	svg, err := cache.SVG.Get(key)
 	if err == nil {
 		w.Header().Set("Content-Type", "image/svg+xml")
@@ -60,8 +60,14 @@ func SVGHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 // svgKey creates a key for caching by combining all parameters of a drawing.
-func svgKey(style string, job palette.PaintJob) string {
-	return fmt.Sprintf("svg:%s %d %d %d", style, job.Width, job.Height, job.Max)
+func svgKey(u *url.URL, job palette.PaintJob) string {
+	return fmt.Sprintf("svg:%s %s %d %d %d",
+		u.String(),
+		u.Query().Get("style"),
+		job.Width,
+		job.Height,
+		job.Max,
+	)
 }
 
 type IndexView struct {
