@@ -127,7 +127,7 @@ func ParseHTML(s string) ([]*ColorMention, error) {
 				}
 			}
 			// Look for a <style> element
-			if n.Data == "style" {
+			if n.Data == "style" && n.FirstChild != nil {
 				mentions = append(mentions, ParseStylesheet(n.FirstChild.Data)...)
 			}
 		}
