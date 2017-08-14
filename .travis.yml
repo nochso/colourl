@@ -1,13 +1,20 @@
-language: go
 sudo: false
-before_install:
-  - go get golang.org/x/tools/cmd/cover
-  - go get github.com/axw/gocov/gocov
-  - go get github.com/modocache/gover
-  - go get github.com/mattn/goveralls
+language: go
+# https://github.com/golang/go/wiki/Go-Release-Cycle#release-maintenance
+go:
+  - 1.x
+  - tip
+install:
+  - # Do nothing. This is needed to prevent default install action "go get -t -v ./..." from happening here (we want it to happen inside script step).
+matrix:
+  allow_failures:
+    - go: tip
+  fast_finish: true
 script:
-  - go test -coverprofile=css.coverprofile ./css
-  - go test -coverprofile=page.coverprofile ./page
-  - go test -coverprofile=palette.coverprofile ./palette
-  - $HOME/gopath/bin/gover
-  - $HOME/gopath/bin/goveralls -coverprofile=gover.coverprofile -service travis-ci
+  - go get -v github.com/mattn/goveralls
+  - go get -v github.com/go-playground/overalls
+  - go get -t -v ./...
+  - diff -u <(echo -n) <(gofmt -d -s .)
+  - go tool vet .
+  - overalls -project github.com/nochso/colourl -covermode atomic -- -race -v
+  - $HOME/gopath/bin/goveralls -coverprofile=overalls.coverprofile -service=travis-ci
