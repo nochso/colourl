@@ -148,8 +148,12 @@ func ParseStylesheet(sheet string) []*ColorMention {
 	var selector string
 	var cms []*ColorMention
 	for {
-		gt, _, data := p.Next()
+		gt, tt, data := p.Next()
 		if gt == css.ErrorGrammar {
+			// ignore *asterisks froms browser/version specific rules
+			if tt == css.DelimToken && string(data) == "*" {
+				continue
+			}
 			break
 		}
 		// Remember the selector for the upcoming declarations
