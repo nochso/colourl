@@ -224,7 +224,7 @@ func parseColor(t []css.Token) (c *colorful.Color, ok bool) {
 				return nil, false
 			}
 		}
-		c := colorful.Color{rgb[0] / 255.0, rgb[1] / 255.0, rgb[2] / 255.0}
+		c := colorful.Color{R: rgb[0] / 255.0, G: rgb[1] / 255.0, B: rgb[2] / 255.0}
 		return &c, true
 	}
 
@@ -239,7 +239,7 @@ func parseColor(t []css.Token) (c *colorful.Color, ok bool) {
 				return nil, false
 			}
 		}
-		c := colorful.Color{rgb[0] / 100.0, rgb[1] / 100.0, rgb[2] / 100.0}
+		c := colorful.Color{R: rgb[0] / 100.0, G: rgb[1] / 100.0, B: rgb[2] / 100.0}
 		return &c, true
 	}
 
