@@ -76,7 +76,7 @@ func New(u string) (*Page, error) {
 		}
 		css, err := p.NewFile(c.String())
 		if err != nil { // Log and continue on error
-			log.Printf("Warning: Could not get CSS mentioned in '%s': %s", p.HTML.URL, err)
+			log.Warnf("could not get CSS mentioned in '%s': %s", p.HTML.URL, err)
 		} else {
 			p.CSS = append(p.CSS, css)
 		}
@@ -176,7 +176,7 @@ func (p *Page) cssURLs() []*url.URL {
 		if isStyleSheet {
 			uri, err := url.Parse(link)
 			if err != nil {
-				log.Printf("Warning: Could not parse CSS link '%s': %s", link, err)
+				log.Warnf("could not parse CSS link '%s': %s", link, err)
 				continue
 			}
 			urls = append(urls, p.HTML.URL.ResolveReference(uri))
