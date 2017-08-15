@@ -2,6 +2,7 @@
 package page
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -63,9 +64,9 @@ func (p *Page) Size() int64 {
 
 // New Page from a URL.
 // Any linked CSS stylesheets will be downloaded.
-func New(u string) (*Page, error) {
+func New(ctx context.Context, u string) (*Page, error) {
 	p := &Page{}
-	html, err := p.NewFile(u) // Get HTML body
+	html, err := p.NewFile(ctx, u) // Get HTML body
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +75,7 @@ func New(u string) (*Page, error) {
 		if p.Count() >= MaxFileCount {
 			break
 		}
-		css, err := p.NewFile(c.String())
+		css, err := p.NewFile(ctx, c.String())
 		if err != nil { // Log and continue on error
 			log.Warnf("could not get CSS mentioned in '%s': %s", p.HTML.URL, err)
 		} else {
@@ -85,11 +86,12 @@ func New(u string) (*Page, error) {
 }
 
 // NewFile creates a new File by GETting it from url.
-func (p *Page) NewFile(url string) (*File, error) {
+func (p *Page) NewFile(ctx context.Context, url string) (*File, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
 	// Remember the original URL. It might change afterwards because of redirects.
 	f := &File{URL: req.URL}
 
@@ -129,7 +131,10 @@ func (p *Page) NewFile(url string) (*File, error) {
 	if err != nil {
 		return nil, err
 	}
-	cache.Page.Set(url, f.Body)
+	err = cache.Page.Set(url, f.Body)
+	if err != nil {
+		log.Error(err)
+	}
 	return f, nil
 }
 

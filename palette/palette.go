@@ -2,6 +2,7 @@
 package palette
 
 import (
+	"context"
 	"fmt"
 	"sort"
 
@@ -92,8 +93,8 @@ func (c ColorScore) String() string {
 
 // New creates a Palette from a websites CSS colors.
 // Colors are sorted by their score.
-func New(url string, scorer Scorer) (Palette, error) {
-	pg, err := page.New(url)
+func New(ctx context.Context, url string, scorer Scorer) (Palette, error) {
+	pg, err := page.New(ctx, url)
 	if err != nil {
 		return nil, err
 	}

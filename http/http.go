@@ -4,11 +4,13 @@ package http
 //go:generate go-bindata -pkg $GOPACKAGE -prefix asset/ asset/...
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/nochso/colourl/cache"
@@ -18,6 +20,8 @@ import (
 var scorer = &palette.SumScore{}
 
 var tmpl *template.Template
+
+const svgTimeout = time.Second * 5
 
 func init() {
 	b, err := Asset("index.html")
@@ -48,7 +52,10 @@ func SVGHandler(w http.ResponseWriter, req *http.Request) {
 		w.Write(svg.([]byte))
 		return
 	}
-	p, err := palette.New(url, scorer)
+
+	ctx, cancel := context.WithTimeout(context.Background(), svgTimeout)
+	defer cancel()
+	p, err := palette.New(ctx, url, scorer)
 	if err != nil {
 		http.Error(w, "Unable to create a palette: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -114,9 +121,9 @@ func IndexMux() (m *http.ServeMux) {
 // NewPaintJob creates a PaintJob based on GET parameters.
 func NewPaintJob(v url.Values) palette.PaintJob {
 	return palette.PaintJob{
-		Max:    parseInt(v.Get("max"), 5, 1, 50),
-		Width:  parseInt(v.Get("w"), 512, 8, 4096),
-		Height: parseInt(v.Get("h"), 512, 8, 4096),
+		Max:    parseInt(v.Get("max"), 5, 1, 64),
+		Width:  parseInt(v.Get("w"), 512, 1, 4096),
+		Height: parseInt(v.Get("h"), 512, 1, 4096),
 	}
 }
 
