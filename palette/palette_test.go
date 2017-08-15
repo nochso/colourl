@@ -1,6 +1,7 @@
 package palette
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -16,7 +17,7 @@ func serve() *httptest.Server {
 func TestNew(t *testing.T) {
 	s := serve()
 	defer s.Close()
-	p, err := New(s.URL+"/mixed.html", &SumScore{})
+	p, err := New(context.Background(), s.URL+"/mixed.html", &SumScore{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -41,7 +42,7 @@ func TestNew(t *testing.T) {
 func TestPalette_Trim(t *testing.T) {
 	s := serve()
 	defer s.Close()
-	p, err := New(s.URL+"/mixed.html", &SumScore{})
+	p, err := New(context.Background(), s.URL+"/mixed.html", &SumScore{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,7 +65,7 @@ func TestPalette_Trim(t *testing.T) {
 }
 
 func TestNew_ErrorGET(t *testing.T) {
-	_, err := New("invalid url", nil)
+	_, err := New(context.Background(), "invalid url", nil)
 	if err == nil {
 		t.Error("Expecting error because of invalid URL")
 	}

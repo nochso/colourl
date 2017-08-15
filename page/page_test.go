@@ -1,6 +1,7 @@
 package page
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -14,7 +15,7 @@ func serve() *httptest.Server {
 func ExampleNew() {
 	s := serve()
 	defer s.Close()
-	p, _ := New(s.URL + "/external.html")
+	p, _ := New(context.Background(), s.URL+"/external.html")
 	fmt.Printf("%s: %s\n", p.HTML.URL.Path, p.HTML.Body)
 	fmt.Printf("%s: %s\n", p.CSS[0].URL.Path, p.CSS[0].Body)
 	// Output:
@@ -26,7 +27,7 @@ func ExampleNew() {
 func TestNewSimple(t *testing.T) {
 	s := serve()
 	defer s.Close()
-	p, err := New(s.URL + "/embedded.html")
+	p, err := New(context.Background(), s.URL + "/embedded.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,7 +43,7 @@ func TestNewSimple(t *testing.T) {
 func TestNewExternal(t *testing.T) {
 	s := serve()
 	defer s.Close()
-	p, err := New(s.URL + "/external.html")
+	p, err := New(context.Background(), s.URL + "/external.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,7 +64,7 @@ func TestNewExternal(t *testing.T) {
 func TestNewErrorWhenHTMLMissing(t *testing.T) {
 	s := serve()
 	defer s.Close()
-	_, err := New(s.URL + "/404.html")
+	_, err := New(context.Background(), s.URL + "/404.html")
 	if err == nil {
 		t.Fatal("Must return error on anything but HTTP status 200")
 	}
@@ -72,7 +73,7 @@ func TestNewErrorWhenHTMLMissing(t *testing.T) {
 func TestNewNoErrorWhenMissingExternal(t *testing.T) {
 	s := serve()
 	defer s.Close()
-	_, err := New(s.URL + "/missingexternal.html")
+	_, err := New(context.Background(), s.URL + "/missingexternal.html")
 	if err != nil {
 		t.Fatal("Must not return error when missing external CSS files")
 	}
@@ -81,14 +82,14 @@ func TestNewNoErrorWhenMissingExternal(t *testing.T) {
 func TestNewNoErrorWhenInvalidExternalURL(t *testing.T) {
 	s := serve()
 	defer s.Close()
-	_, err := New(s.URL + "/invalidexternal.html")
+	_, err := New(context.Background(), s.URL + "/invalidexternal.html")
 	if err != nil {
 		t.Fatalf("Must not return error when external URLs are invalid: %s", err)
 	}
 }
 
 func TestNewInvalidHost(t *testing.T) {
-	_, err := New("http://Ksm3Acmkk.foobar/")
+	_, err := New(context.Background(), "http://Ksm3Acmkk.foobar/")
 	if err == nil {
 		t.Fatal("Must return error for unknown domain")
 	}
