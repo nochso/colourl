@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/justinas/alice"
 	chttpd "github.com/nochso/colourl/http"
 	log "github.com/sirupsen/logrus"
 )
@@ -39,20 +40,26 @@ func main() {
 		"port":    port,
 		"verbose": verbose,
 	}).Info("Starting HTTP server")
-	http.Handle("/", logHandler(chttpd.IndexMux().ServeHTTP))
-	http.HandleFunc("/svg", logHandler(chttpd.SVGHandler))
-	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+
+	mux := http.NewServeMux()
+	mux.Handle("/", chttpd.IndexMux())
+	mux.HandleFunc("/svg", chttpd.SVGHandler)
+	h := alice.New(
+		logHandler,
+	).Then(mux)
+
+	panic(http.ListenAndServe(fmt.Sprintf(":%d", port), h))
 }
 
-func logHandler(fn http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func logHandler(fn http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		fn(w, r)
+		fn.ServeHTTP(w, r)
 		log.WithFields(log.Fields{
 			"duration": time.Now().Sub(start),
 			"url":      r.URL,
 			"method":   r.Method,
 			"remote":   r.RemoteAddr,
 		}).Debug("HTTP request")
-	}
+	})
 }
