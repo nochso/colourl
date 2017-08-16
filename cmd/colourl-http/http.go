@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/NYTimes/gziphandler"
 	"github.com/justinas/alice"
 	chttpd "github.com/nochso/colourl/http"
 	log "github.com/sirupsen/logrus"
@@ -46,6 +47,7 @@ func main() {
 	mux.HandleFunc("/svg", chttpd.SVGHandler)
 	h := alice.New(
 		logHandler,
+		gziphandler.GzipHandler,
 	).Then(mux)
 
 	panic(http.ListenAndServe(fmt.Sprintf(":%d", port), h))
