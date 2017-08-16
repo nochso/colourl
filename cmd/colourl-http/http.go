@@ -22,12 +22,9 @@ var (
 	BuildDate string
 )
 
-func init() {
+func main() {
 	flag.IntVar(&port, "p", 9191, "HTTP listening port")
 	flag.BoolVar(&verbose, "v", false, "Enable verbose / debug output")
-}
-
-func main() {
 	flag.Parse()
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	if verbose {
