@@ -8,7 +8,6 @@ import (
 
 	chttpd "github.com/nochso/colourl/http"
 	log "github.com/sirupsen/logrus"
-	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 var (
@@ -28,9 +27,7 @@ func init() {
 
 func main() {
 	flag.Parse()
-	formatter := new(prefixed.TextFormatter)
-	formatter.TimestampFormat = "2006-01-02 15:04:05 Z07:00"
-	log.SetFormatter(formatter)
+	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	if verbose {
 		log.SetLevel(log.DebugLevel)
 	}
