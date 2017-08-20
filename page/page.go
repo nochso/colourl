@@ -178,13 +178,13 @@ func (p *Page) cssURLs() []*url.URL {
 		}
 
 		// If it links to a stylesheet, resolve the URL based on the URL referencing it
-		if isStyleSheet {
-			uri, err := url.Parse(link)
+		if isStyleSheet && link != "" {
+			u, err := p.HTML.URL.Parse(link)
 			if err != nil {
 				log.Warnf("could not parse CSS link '%s': %s", link, err)
 				continue
 			}
-			urls = append(urls, p.HTML.URL.ResolveReference(uri))
+			urls = append(urls, u)
 		}
 	}
 	return urls
