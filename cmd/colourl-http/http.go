@@ -34,20 +34,34 @@ func main() {
 		"version":    Version,
 		"build_date": BuildDate,
 	}).Info("colourl-http")
+
+	srv := newServer()
 	log.WithFields(log.Fields{
 		"port":    port,
 		"verbose": verbose,
 	}).Info("Starting HTTP server")
+	log.Fatal(srv.ListenAndServe())
+}
 
+func newServer() *http.Server {
+	return &http.Server{
+		Handler:        newHandler(),
+		Addr:           fmt.Sprintf(":%d", port),
+		ReadTimeout:    time.Second * 5,
+		WriteTimeout:   time.Second * 10,
+		IdleTimeout:    time.Second * 60,
+		MaxHeaderBytes: 1 << 17, // 128kB
+	}
+}
+
+func newHandler() http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("/", chttpd.IndexMux())
 	mux.HandleFunc("/svg", chttpd.SVGHandler)
-	h := alice.New(
+	return alice.New(
 		logHandler,
 		gziphandler.GzipHandler,
 	).Then(mux)
-
-	panic(http.ListenAndServe(fmt.Sprintf(":%d", port), h))
 }
 
 func logHandler(fn http.Handler) http.Handler {
